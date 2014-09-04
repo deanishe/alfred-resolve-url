@@ -9,8 +9,8 @@ You can paste a URL into Alfred's query box or grab a URL directly from the clip
 ## Usage ##
 
 - `resolve URL` — Find and display the canonical URL after all redirects.
-	+ `↩` — Copy the new URL to the clipboard
-	+ `⌘+↩` — Open the new URL in your default browser
+	+ `↩` — Open the new URL in your default browser
+	+ `⌘+↩` — Copy the new URL to the clipboard
 - `resolvepb` — Grab the URL from the clipboard and resolve any redirects as above.
 
 If the URL has no redirects, a "URL is canonical" message will be displayed.
