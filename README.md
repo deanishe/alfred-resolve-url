@@ -2,7 +2,7 @@
 
 Follows any HTTP redirects and returns the canonical URL.
 
-![](demo.gif "demo.gif")
+![](https://raw.githubusercontent.com/deanishe/alfred-resolve-url/master/demo.gif "demo.gif")
 
 You can paste a URL into Alfred's query box or grab a URL directly from the clipboard.
 
