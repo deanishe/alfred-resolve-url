@@ -14,13 +14,13 @@
 from __future__ import print_function, unicode_literals
 
 import sys
-# import subprocess
 import re
 from urlparse import urlparse
 from socket import gethostbyname_ex
 from multiprocessing.dummy import Pool
+from time import time
 
-from workflow import Workflow, ICON_WARNING, web, ICON_INFO, ICON_ERROR
+from workflow import Workflow, ICON_WARNING, web, ICON_ERROR
 
 URL_REGEX = re.compile(
     r'^(?:http|ftp)s?://'  # http:// or https://
@@ -36,6 +36,7 @@ log = None
 
 
 def resolve(url):
+    s = time()
     try:
         r = web.get(url)
         r.raise_for_status()
@@ -47,6 +48,7 @@ def resolve(url):
         log.info('No redirect : {}'.format(url))
     else:
         log.info('{}  ->  {}'.format(url, url2))
+    log.info('Resolved canonical URL in {:0.3f} seconds'.format(time() - s))
     return url2
 
 
@@ -55,31 +57,30 @@ def url_valid(url):
     return URL_REGEX.match(url)
 
 
+def hostname_for_url(url):
+    """Return hostname for URL"""
+    host = urlparse(url).netloc
+    m = DOMAIN_WITH_PORT.match(host)
+    if m:
+        host = m.group(1)
+    log.debug('{} <- {}'.format(host, url))
+    return host
+
+
 def dns_info(url):
     """Return DNS info for host of URL"""
-    domain = urlparse(url).netloc
-    m = DOMAIN_WITH_PORT.match(domain)
-    if m:
-        domain = m.group(1)
-    log.debug('{} <- {}'.format(domain, url))
+    s = time()
+    domain = hostname_for_url(url)
     try:
         hostname, aliases, ipaddrs = gethostbyname_ex(domain)
     except Exception as err:
         log.error('Error fetching DNS for {} : {}'.format(domain, err))
         return None
+    log.info('Retrieved DNS info in {:0.3f} seconds'.format(time() - s))
     return {
         'hostname': hostname,
         'aliases': aliases,
         'ipaddrs': ipaddrs}
-
-# def url_from_clipboard():
-#     cmd = ['pbpaste', '-Prefer', 'txt']
-#     text = subprocess.check_output(cmd).decode('utf-8')
-#     if not url_valid(text):
-#         log.debug('No valid URL on clipboard')
-#         return None
-#     log.info('URL from clipboard : {}'.format(text))
-#     return text
 
 
 def main(wf):
@@ -117,6 +118,10 @@ def main(wf):
         wf.add_item('URL is canonical', url, icon='canonical.png')
 
     else:
+        # Update DNS info if this is a different host
+        if hostname_for_url(url) != hostname_for_url(url2):
+            dnsinfo = dns_info(url2)
+
         wf.add_item(url2, 'Copy to Clipboard',
                     arg=url2,
                     valid=True,
