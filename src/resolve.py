@@ -115,14 +115,18 @@ def main(wf):
         return
 
     elif url == url2:
-        wf.add_item('URL is canonical', url, icon='canonical.png')
+        wf.add_item('URL is canonical', url,
+                    arg=url,
+                    valid=True,
+                    largetext=url,
+                    icon='canonical.png')
 
     else:
         # Update DNS info if this is a different host
         if hostname_for_url(url) != hostname_for_url(url2):
             dnsinfo = dns_info(url2)
 
-        wf.add_item(url2, 'Copy to Clipboard',
+        wf.add_item(url2, 'Open in default Browser',
                     arg=url2,
                     valid=True,
                     largetext=url2,

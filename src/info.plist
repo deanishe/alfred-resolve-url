@@ -12,9 +12,9 @@
 				<key>destinationuid</key>
 				<string>0ECFD7D6-F218-4A17-8237-9FCC433933DC</string>
 				<key>modifiers</key>
-				<integer>0</integer>
+				<integer>1048576</integer>
 				<key>modifiersubtext</key>
-				<string></string>
+				<string>Copy to Clipboard</string>
 			</dict>
 			<dict>
 				<key>destinationuid</key>
@@ -28,9 +28,9 @@
 				<key>destinationuid</key>
 				<string>5BFFB77D-7602-4C36-AB3D-0AC48BF9C2C3</string>
 				<key>modifiers</key>
-				<integer>1048576</integer>
+				<integer>0</integer>
 				<key>modifiersubtext</key>
-				<string>Open in Browser</string>
+				<string></string>
 			</dict>
 		</array>
 		<key>6EA5B31E-9C13-43CA-9188-50A57EC5FF76</key>
@@ -144,6 +144,25 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>resolvepb</string>
+				<key>text</key>
+				<string>Resolve URL on Clipboard</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>6EA5B31E-9C13-43CA-9188-50A57EC5FF76</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
@@ -158,25 +177,6 @@ end tell</string>
 			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
 			<string>B40AC93A-5C7C-42BB-A934-CE44A7D77B2A</string>
-			<key>version</key>
-			<integer>0</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>2</integer>
-				<key>keyword</key>
-				<string>resolvepb</string>
-				<key>text</key>
-				<string>Resolve URL on Clipboard</string>
-				<key>withspace</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>6EA5B31E-9C13-43CA-9188-50A57EC5FF76</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
