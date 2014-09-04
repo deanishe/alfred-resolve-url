@@ -16,8 +16,21 @@ from __future__ import print_function, unicode_literals
 import sys
 # import subprocess
 import re
+from urlparse import urlparse
+from socket import gethostbyname_ex
+from multiprocessing.dummy import Pool
 
-from workflow import Workflow, ICON_WARNING, web, ICON_INFO
+from workflow import Workflow, ICON_WARNING, web, ICON_INFO, ICON_ERROR
+
+URL_REGEX = re.compile(
+    r'^(?:http|ftp)s?://'  # http:// or https://
+    r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+    r'localhost|'  # localhost...
+    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+    r'(?::\d+)?'  # optional port
+    r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+
+DOMAIN_WITH_PORT = re.compile(r'(.+):\d+')
 
 log = None
 
@@ -27,7 +40,7 @@ def resolve(url):
         r = web.get(url)
         r.raise_for_status()
     except Exception as err:
-        log.error('URL : {}, ERROR : {}'.format(url, err))
+        log.error('Error opening URL {} : {}'.format(url, err))
         return None
     url2 = r.url
     if url == url2:
@@ -39,8 +52,25 @@ def resolve(url):
 
 def url_valid(url):
     """Return True/False if URL is valid"""
-    return re.match(r'https?://.+', url, re.IGNORECASE)
+    return URL_REGEX.match(url)
 
+
+def dns_info(url):
+    """Return DNS info for host of URL"""
+    domain = urlparse(url).netloc
+    m = DOMAIN_WITH_PORT.match(domain)
+    if m:
+        domain = m.group(1)
+    log.debug('{} <- {}'.format(domain, url))
+    try:
+        hostname, aliases, ipaddrs = gethostbyname_ex(domain)
+    except Exception as err:
+        log.error('Error fetching DNS for {} : {}'.format(domain, err))
+        return None
+    return {
+        'hostname': hostname,
+        'aliases': aliases,
+        'ipaddrs': ipaddrs}
 
 # def url_from_clipboard():
 #     cmd = ['pbpaste', '-Prefer', 'txt']
@@ -64,21 +94,48 @@ def main(wf):
 
     elif not url_valid(url):
         wf.add_item('Invalid URL', url, icon=ICON_WARNING)
+        url = None
+
+    if not url:
+        wf.send_feedback()
+        return
+
+    pool = Pool(2)
+
+    resolver = pool.apply_async(resolve, (url,))
+    dns = pool.apply_async(dns_info, (url,))
+
+    url2 = resolver.get()
+    dnsinfo = dns.get()
+
+    if not url2:
+        wf.add_item("Couldn't open URL", url, icon=ICON_ERROR)
+        wf.send_feedback()
+        return
+
+    elif url == url2:
+        wf.add_item('URL is canonical', url, icon='canonical.png')
 
     else:
-        url2 = resolve(url)
-        if not url2:
-            wf.add_item("Couldn't open URL", url, icon=ICON_WARNING)
+        wf.add_item(url2, 'Copy to Clipboard',
+                    arg=url2,
+                    valid=True,
+                    uid=url2,
+                    icon='redirect.png')
 
-        elif url == url2:
-            wf.add_item('No redirects', url, icon=ICON_INFO)
+    if dnsinfo:
 
-        else:
-            wf.add_item(url2, 'Copy to Clipboard',
-                        arg=url2,
-                        valid=True,
-                        uid=url2,
-                        icon='redirect.png')
+        wf.add_item(dnsinfo['hostname'],
+                    'Primary host',
+                    icon='host.png')
+
+        for ipaddr in reversed(dnsinfo['ipaddrs']):
+            wf.add_item(ipaddr, 'IP address',
+                        icon='ipaddr.png')
+
+        for alias in sorted(dnsinfo['aliases']):
+            wf.add_item(alias, 'Host alias',
+                        icon='alias.png')
 
     wf.send_feedback()
 
