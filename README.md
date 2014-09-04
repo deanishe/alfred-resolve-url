@@ -1,6 +1,6 @@
 # Resolve HTTP Redirects — an Alfred 2 Workflow #
 
-Follows any HTTP redirects and returns the canonical URL.
+Follows any HTTP redirects and returns the canonical URL. Also displays information about the primary host (hostname, IP address(es), aliases).
 
 ![](https://raw.githubusercontent.com/deanishe/alfred-resolve-url/master/demo.gif "demo.gif")
 
@@ -13,7 +13,7 @@ You can paste a URL into Alfred's query box or grab a URL directly from the clip
 	+ `⌘+↩` — Open the new URL in your default browser
 - `resolvepb` — Grab the URL from the clipboard and resolve any redirects as above.
 
-If the URL has no redirects, a "No redirects" message will be displayed.
+If the URL has no redirects, a "URL is canonical" message will be displayed.
 
 ## Licence, thanks ##
 
