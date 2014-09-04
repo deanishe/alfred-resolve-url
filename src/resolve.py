@@ -125,21 +125,27 @@ def main(wf):
         wf.add_item(url2, 'Copy to Clipboard',
                     arg=url2,
                     valid=True,
-                    uid=url2,
+                    largetext=url2,
                     icon='redirect.png')
 
     if dnsinfo:
 
         wf.add_item(dnsinfo['hostname'],
                     'Primary host',
+                    copytext=dnsinfo['hostname'],
+                    largetext=dnsinfo['hostname'],
                     icon='host.png')
 
         for ipaddr in reversed(dnsinfo['ipaddrs']):
             wf.add_item(ipaddr, 'IP address',
+                        copytext=ipaddr,
+                        largetext=ipaddr,
                         icon='ipaddr.png')
 
         for alias in sorted(dnsinfo['aliases']):
             wf.add_item(alias, 'Host alias',
+                        copytext=alias,
+                        largetext=alias,
                         icon='alias.png')
 
     wf.send_feedback()
