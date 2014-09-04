@@ -17,7 +17,7 @@ import sys
 # import subprocess
 import re
 
-from workflow import Workflow, ICON_WEB, ICON_WARNING, web, ICON_INFO
+from workflow import Workflow, ICON_WARNING, web, ICON_INFO
 
 log = None
 
