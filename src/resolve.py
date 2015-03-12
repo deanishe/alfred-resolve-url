@@ -23,7 +23,7 @@ from time import time
 from workflow import Workflow, ICON_WARNING, web, ICON_ERROR
 
 URL_REGEX = re.compile(
-    r'^(?:http|ftp)s?://'  # http:// or https://
+    r'^[a-z]+://'  # scheme checked through SCHEME_REGEX
     r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
     r'localhost|'  # localhost...
     r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
@@ -31,6 +31,8 @@ URL_REGEX = re.compile(
     r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
 DOMAIN_WITH_PORT = re.compile(r'(.+):\d+')
+
+SCHEME_REGEX = re.compile(r'^(?:http|ftp)s?://', re.IGNORECASE)  # http://, https://, ftp://, or ftps://
 
 log = None
 
@@ -51,6 +53,11 @@ def resolve(url):
     log.info('Resolved canonical URL in {:0.3f} seconds'.format(time() - s))
     return url2
 
+def url_fixscheme(url):
+    """Return URL with fixed scheme"""
+    if SCHEME_REGEX.match(url):
+        return url
+    return "http://{url}".format(url=url)
 
 def url_valid(url):
     """Return True/False if URL is valid"""
@@ -92,10 +99,11 @@ def main(wf):
         wf.add_item('No URL specified',
                     'Paste a URL',
                     icon=ICON_WARNING)
-
-    elif not url_valid(url):
-        wf.add_item('Invalid URL', url, icon=ICON_WARNING)
-        url = None
+    else:
+        url = url_fixscheme(url)
+        if not url_valid(url):
+            wf.add_item('Invalid URL', url, icon=ICON_WARNING)
+            url = None
 
     if not url:
         wf.send_feedback()
