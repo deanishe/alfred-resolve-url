@@ -4,7 +4,9 @@ Follows any HTTP redirects and returns the canonical URL. Also displays informat
 
 ![](https://raw.githubusercontent.com/deanishe/alfred-resolve-url/master/demo.gif "demo.gif")
 
-You can paste a URL into Alfred's query box or grab a URL directly from the clipboard.
+You can paste a URL into Alfred's query box or grab a URL directly from the
+clipboard. If the URL contains no scheme (`http://`, `https://`, etc.),
+`http://` will be assumed.
 
 ## Usage ##
 

@@ -64,6 +64,14 @@
 				<integer>102</integer>
 				<key>keyword</key>
 				<string>resolve</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<false/>
+				<key>queuedelaymode</key>
+				<integer>1</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
 				<key>runningsubtext</key>
 				<string>Resolving URL redirects…</string>
 				<key>script</key>
