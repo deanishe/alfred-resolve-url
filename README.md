@@ -1,4 +1,5 @@
-# Resolve HTTP Redirects — an Alfred 2 Workflow #
+Resolve HTTP Redirects in Alfred
+================================
 
 Follows any HTTP redirects and returns the canonical URL. Also displays information about the primary host (hostname, IP address(es), aliases).
 
